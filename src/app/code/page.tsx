@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { getSubjects } from "@/lib/store";
 
+export const dynamic = "force-dynamic";
+
 export default function CodePage() {
   const subjects = getSubjects();
 
@@ -34,21 +36,49 @@ export default function CodePage() {
             No subjects yet. Admin can add them from /admin.
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-6">
             {subjects.map((subject) => (
-              <Link
+              <section
                 key={subject.id}
-                href={`/code/${subject.id}`}
-                className="block bg-white border border-gray-200 rounded-xl p-6 hover:border-blue-400 hover:shadow-md transition"
+                className="bg-white border border-gray-200 rounded-xl p-6"
               >
-                <h2 className="text-xl font-semibold text-gray-900">
-                  {subject.name}
-                </h2>
-                <p className="text-sm text-gray-500 mt-1">
-                  {subject.programs.length} program
-                  {subject.programs.length !== 1 ? "s" : ""}
-                </p>
-              </Link>
+                <div className="flex items-center justify-between gap-4 border-b border-gray-100 pb-4">
+                  <h2 className="text-xl font-semibold text-gray-900">
+                    {subject.name}
+                  </h2>
+                  <span className="text-sm text-gray-500">
+                    {subject.programs.length} program
+                    {subject.programs.length !== 1 ? "s" : ""}
+                  </span>
+                </div>
+                {subject.programs.length === 0 ? (
+                  <p className="pt-4 text-sm text-gray-500">No programs published yet.</p>
+                ) : (
+                  <ul className="divide-y divide-gray-100">
+                    {subject.programs.map((program) => (
+                      <li key={program.id} className="py-4 first:pt-4 last:pb-0">
+                        <details>
+                          <summary className="cursor-pointer list-inside flex flex-wrap items-center justify-between gap-2 font-medium text-gray-900">
+                            <span>{program.title}</span>
+                            <span className="text-xs font-normal text-gray-500">
+                              {program.language}
+                            </span>
+                          </summary>
+                          <pre className="mt-3 max-h-96 overflow-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100">
+                            <code>{program.code}</code>
+                          </pre>
+                          <Link
+                            href={`/code/${subject.id}/${program.id}`}
+                            className="mt-3 inline-block text-sm font-medium text-blue-700 hover:underline"
+                          >
+                            Open full program
+                          </Link>
+                        </details>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </section>
             ))}
           </div>
         )}
