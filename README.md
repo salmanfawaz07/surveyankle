@@ -1,6 +1,6 @@
-# DailyZap
+# surveyankle
 
-A very simple experimental Next.js website.
+DailyZap is a very simple experimental Next.js website.
 
 ## What it is
 
