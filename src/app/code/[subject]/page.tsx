@@ -2,13 +2,15 @@ import Link from "next/link";
 import { getSubject } from "@/lib/store";
 import { notFound } from "next/navigation";
 
+export const dynamic = "force-dynamic";
+
 export default async function SubjectPage({
   params,
 }: {
   params: Promise<{ subject: string }>;
 }) {
   const { subject: subjectId } = await params;
-  const subject = getSubject(subjectId);
+  const subject = await getSubject(subjectId);
 
   if (!subject) {
     notFound();

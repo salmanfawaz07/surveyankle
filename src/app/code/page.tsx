@@ -3,8 +3,8 @@ import { getSubjects } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
 
-export default function CodePage() {
-  const subjects = getSubjects();
+export default async function CodePage() {
+  const subjects = await getSubjects();
 
   return (
     <div className="min-h-screen bg-gray-50">

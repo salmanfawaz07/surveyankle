@@ -22,7 +22,7 @@ DailyZap is a very simple experimental Next.js website.
 # 1. Install dependencies
 npm install
 
-# 2. Copy environment file
+# 2. Copy environment file and set DATABASE_URL to a Neon Postgres connection string
 cp .env.example .env
 
 # 3. (Optional) change the admin password in .env
@@ -45,16 +45,15 @@ Open http://localhost:3000
 2. Import in Vercel
 3. Add environment variable:
    - `ADMIN_PASSWORD` = your secret password
-4. Deploy
+4. In the Vercel project, open **Storage**, create a **Neon Postgres** database,
+   and connect it to this project for Production (and Preview if needed).
+5. Confirm Vercel has set the `DATABASE_URL` environment variable, then deploy.
 
-**Note about data storage:**  
-This project uses a simple local JSON file (`data/db.json`) for storage.  
-
-- Works perfectly for local development (`npm run dev`)
-- On Vercel the file system is ephemeral (data resets on new deployments / cold starts).  
-  For a real persistent version you can later replace the store with Upstash Redis or Vercel KV (very easy).
-
-For a student / demo project this is intentional and keeps everything extremely simple.
+The app stores subjects and programs in Postgres. On the first connection to an
+empty database, it imports the starter content from `data/db.json` once. Admin
+changes are then saved in Postgres and persist across deployments and serverless
+restarts. For local development, set `DATABASE_URL` in `.env` to a Neon
+connection string before running the app.
 
 ## Project Structure
 

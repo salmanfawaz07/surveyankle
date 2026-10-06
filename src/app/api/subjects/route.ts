@@ -7,8 +7,16 @@ import {
 } from "@/lib/store";
 
 export async function GET() {
-  const subjects = getSubjects();
-  return NextResponse.json({ subjects });
+  try {
+    const subjects = await getSubjects();
+    return NextResponse.json({ subjects });
+  } catch (error) {
+    console.error("Failed to load subjects:", error);
+    return NextResponse.json(
+      { error: "Unable to load subjects. Check the database configuration." },
+      { status: 500 }
+    );
+  }
 }
 
 export async function POST(req: NextRequest) {
@@ -21,12 +29,12 @@ export async function POST(req: NextRequest) {
     if (!name || typeof name !== "string") {
       return NextResponse.json({ error: "Name required" }, { status: 400 });
     }
-    const subject = createSubject(name);
+    const subject = await createSubject(name);
     return NextResponse.json({ subject });
   } catch (error) {
     console.error("Failed to create subject:", error);
     return NextResponse.json(
-      { error: "Unable to save subject. Check server storage permissions." },
+      { error: "Unable to save subject. Check the database connection." },
       { status: 500 }
     );
   }
@@ -42,9 +50,17 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ error: "ID required" }, { status: 400 });
   }
 
-  const ok = deleteSubject(id);
-  if (!ok) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  try {
+    const ok = await deleteSubject(id);
+    if (!ok) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Failed to delete subject:", error);
+    return NextResponse.json(
+      { error: "Unable to delete subject. Check the database connection." },
+      { status: 500 }
+    );
   }
-  return NextResponse.json({ success: true });
 }

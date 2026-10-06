@@ -9,7 +9,7 @@ export default async function AdminPage() {
     redirect("/admin/login");
   }
 
-  const subjects = getSubjects();
+  const subjects = await getSubjects();
 
   return <AdminDashboard subjects={subjects} />;
 }

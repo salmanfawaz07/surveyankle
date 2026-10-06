@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-    const program = addProgram(subjectId, title, language, code);
+    const program = await addProgram(subjectId, title, language, code);
     if (!program) {
       return NextResponse.json({ error: "Subject not found" }, { status: 404 });
     }
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error("Failed to create program:", error);
     return NextResponse.json(
-      { error: "Unable to save program. Check server storage permissions." },
+      { error: "Unable to save program. Check the database connection." },
       { status: 500 }
     );
   }
@@ -46,13 +46,23 @@ export async function PUT(req: NextRequest) {
         { status: 400 }
       );
     }
-    const program = updateProgram(subjectId, programId, title, language, code);
+    const program = await updateProgram(
+      subjectId,
+      programId,
+      title,
+      language,
+      code
+    );
     if (!program) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
     return NextResponse.json({ program });
-  } catch {
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+  } catch (error) {
+    console.error("Failed to update program:", error);
+    return NextResponse.json(
+      { error: "Unable to update program. Check the database connection." },
+      { status: 500 }
+    );
   }
 }
 
@@ -68,9 +78,17 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ error: "IDs required" }, { status: 400 });
   }
 
-  const ok = deleteProgram(subjectId, programId);
-  if (!ok) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  try {
+    const ok = await deleteProgram(subjectId, programId);
+    if (!ok) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Failed to delete program:", error);
+    return NextResponse.json(
+      { error: "Unable to delete program. Check the database connection." },
+      { status: 500 }
+    );
   }
-  return NextResponse.json({ success: true });
 }

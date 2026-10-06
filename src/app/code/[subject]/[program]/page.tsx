@@ -3,14 +3,18 @@ import { getSubject, getProgram } from "@/lib/store";
 import { notFound } from "next/navigation";
 import CopyButton from "@/components/CopyButton";
 
+export const dynamic = "force-dynamic";
+
 export default async function ProgramPage({
   params,
 }: {
   params: Promise<{ subject: string; program: string }>;
 }) {
   const { subject: subjectId, program: programId } = await params;
-  const subject = getSubject(subjectId);
-  const program = getProgram(subjectId, programId);
+  const [subject, program] = await Promise.all([
+    getSubject(subjectId),
+    getProgram(subjectId, programId),
+  ]);
 
   if (!subject || !program) {
     notFound();
