@@ -23,8 +23,12 @@ export async function POST(req: NextRequest) {
     }
     const subject = createSubject(name);
     return NextResponse.json({ subject });
-  } catch {
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+  } catch (error) {
+    console.error("Failed to create subject:", error);
+    return NextResponse.json(
+      { error: "Unable to save subject. Check server storage permissions." },
+      { status: 500 }
+    );
   }
 }
 

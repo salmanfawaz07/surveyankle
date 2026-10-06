@@ -25,12 +25,16 @@ function readDB(): DB {
   try {
     const raw = fs.readFileSync(DATA_PATH, "utf-8");
     return JSON.parse(raw) as DB;
-  } catch {
-    return { subjects: [] };
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+      return { subjects: [] };
+    }
+    throw error;
   }
 }
 
 function writeDB(db: DB) {
+  fs.mkdirSync(path.dirname(DATA_PATH), { recursive: true });
   fs.writeFileSync(DATA_PATH, JSON.stringify(db, null, 2), "utf-8");
 }
 

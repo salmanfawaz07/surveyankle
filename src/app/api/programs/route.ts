@@ -24,8 +24,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Subject not found" }, { status: 404 });
     }
     return NextResponse.json({ program });
-  } catch {
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+  } catch (error) {
+    console.error("Failed to create program:", error);
+    return NextResponse.json(
+      { error: "Unable to save program. Check server storage permissions." },
+      { status: 500 }
+    );
   }
 }
 

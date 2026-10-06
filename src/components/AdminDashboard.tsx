@@ -50,7 +50,8 @@ export default function AdminDashboard({ subjects: initialSubjects }: Props) {
       showMsg("Subject created!");
       router.refresh();
     } else {
-      showMsg("Failed to create subject");
+      const data = await res.json().catch(() => ({}));
+      showMsg(data.error || "Failed to create subject");
     }
   };
 
@@ -116,7 +117,8 @@ export default function AdminDashboard({ subjects: initialSubjects }: Props) {
         setSubjects(refreshed.subjects);
         router.refresh();
       } else {
-        showMsg("Failed to add program");
+        const data = await res.json().catch(() => ({}));
+        showMsg(data.error || "Failed to add program");
       }
     }
   };
